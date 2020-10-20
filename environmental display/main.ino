@@ -12,8 +12,6 @@ CCS811 myCCS811(CCS811_ADDR);
 BME280 myBME280;
 
 void setup() { 
-  SerialUSB.begin(9600);
-  SerialUSB.println("Hello!");
   delay(100);
   Wire.begin();
   oled.begin();   // Initialize the OLED
@@ -37,16 +35,11 @@ void setup() {
   //Calling .begin() causes the settings to be loaded
   delay(10);  //Make sure sensor had enough time to turn on. BME280 requires 2ms to start up.
   byte id = myBME280.begin(); //Returns ID of 0x60 if successful
-  SerialUSB.println("setup complete!");
   delay(10000);
 }
 
 void print_data() {
-  SerialUSB.println("Hello from the print function!");
   oled.setFontType(0);
-  
-  SerialUSB.println("screen cleared and prearing to write!");
-//  oled.clear(ALL);
 
   oled.setCursor(0, 0);
   oled.print("TMP");
@@ -59,7 +52,7 @@ void print_data() {
   oled.print(round(myBME280.readFloatHumidity()));
 
   oled.setCursor(0, 20);
-  oled.print("AQI");
+  oled.print("VOC");
   oled.setCursor(25, 20);
   oled.print(round(myCCS811.getTVOC()));
 
@@ -74,17 +67,13 @@ void print_data() {
   oled.print(round(myCCS811.getCO2()));
   
   oled.display();
-  SerialUSB.println("text written!");
   }
 
 void loop() {
-  SerialUSB.println("In loop, waiting");
   delay(2000);
-  SerialUSB.println("Waiting complete");
   //Check to see if data is available
   if (myCCS811.dataAvailable())
   {
-    SerialUSB.println("data avalible");
     //Calling this function updates the global tVOC and eCO2 variables
     myCCS811.readAlgorithmResults();
     //printData fetches the values of tVOC and eCO2
@@ -95,8 +84,6 @@ void loop() {
     //This sends the temperature data to the CCS811
     myCCS811.setEnvironmentalData(BMEhumid, BMEtempC);
   }
-  SerialUSB.println("calling print_data() function");
   print_data();
-  SerialUSB.println("print function conplete");
   delay(2000);
 }
